@@ -36,27 +36,44 @@
     margin-bottom: var(--space-6);
 }
 
-/* Business Hero */
-.business-hero {
+/* Extended Hero with NotebookLM */
+.business-hero-extended {
+    position: relative;
     background: var(--gradient-hero);
     padding: var(--space-12) 0 var(--space-16);
-    text-align: center;
+    overflow: hidden;
+}
+
+.hero-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-10);
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-text-content {
+    text-align: right;
 }
 
 .back-link {
     display: inline-block;
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-6);
     transition: color var(--transition-fast);
+    position: relative;
+    z-index: 1;
 }
 
 .back-link:hover {
     color: var(--color-primary-light);
-}
-
-.business-hero-content {
-    max-width: 800px;
-    margin: 0 auto;
 }
 
 .business-badge {
@@ -71,63 +88,331 @@
 }
 
 .business-icon-large {
-    font-size: 5rem;
+    font-size: 4rem;
     margin-bottom: var(--space-4);
 }
 
 .business-title {
     font-size: var(--font-size-4xl);
     margin-bottom: var(--space-2);
+    line-height: 1.3;
 }
 
 .business-subtitle {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg);
     color: var(--color-text-muted);
     font-style: italic;
+    margin-bottom: var(--space-6);
 }
 
-/* Problems Section */
+.hero-actions {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.hero-notebook {
+    position: relative;
+}
+
+.notebook-hero-wrapper {
+    transform: perspective(1000px) rotateY(-5deg);
+    transition: transform var(--transition-base);
+}
+
+.notebook-hero-wrapper:hover {
+    transform: perspective(1000px) rotateY(0deg);
+}
+
+/* Problem Cards Grid */
 .business-problems {
     background: var(--color-bg);
 }
 
-.problems-list {
-    max-width: 700px;
+.problems-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+    max-width: 900px;
     margin: 0 auto;
 }
 
-.problem-item {
+.problem-card {
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    padding: var(--space-4);
-    background: var(--color-bg-secondary);
+    padding: var(--space-5);
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--space-3);
-    transition: all var(--transition-fast);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    animation: fade-in 0.6s ease-out forwards;
+    opacity: 0;
+    overflow: hidden;
 }
 
-.problem-item:hover {
-    border-color: rgba(239, 68, 68, 0.3);
-    transform: translateX(-4px);
+.problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #ef4444, #f97316);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
 }
 
-.problem-number {
-    width: 32px;
-    height: 32px;
+.problem-card:hover {
+    transform: translateY(-4px) translateX(-4px);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 10px 40px rgba(239, 68, 68, 0.15);
+}
+
+.problem-card:hover::before {
+    opacity: 1;
+}
+
+.problem-card-icon {
+    width: 56px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(239, 68, 68, 0.2);
-    color: #f87171;
-    border-radius: 50%;
-    font-weight: 600;
+    font-size: 1.8rem;
+    background: rgba(239, 68, 68, 0.15);
+    border-radius: var(--radius-lg);
     flex-shrink: 0;
 }
 
-.problem-text {
+.problem-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.problem-number {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: #f87171;
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+}
+
+.problem-card-title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
     color: var(--color-text);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.problem-card-arrow {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-muted);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all var(--transition-fast);
+}
+
+.problem-card:hover .problem-card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.problem-card-hint {
+    position: absolute;
+    bottom: var(--space-2);
+    left: var(--space-3);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.problem-card:hover .problem-card-hint {
+    opacity: 0.7;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    padding: var(--space-6);
+    animation: fade-in 0.2s ease-out;
+}
+
+.modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    animation: modal-slide-up 0.3s ease-out;
+}
+
+@keyframes modal-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.modal-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: rgba(239, 68, 68, 0.15);
+    border-radius: var(--radius-lg);
+}
+
+.modal-badge {
+    padding: var(--space-1) var(--space-3);
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    color: #f87171;
+    font-weight: 600;
+}
+
+.modal-title {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-6);
+    line-height: 1.5;
+}
+
+.modal-sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.modal-section {
+    padding: var(--space-4);
+    background: var(--color-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+.modal-section h4 {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+}
+
+.modal-section p {
+    color: var(--color-text);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.modal-section.solution-section {
+    border-color: rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.05);
+}
+
+.modal-section.solution-section h4 {
+    color: #4ade80;
+}
+
+.modal-simple {
+    max-width: 450px;
+    padding: var(--space-6);
+}
+
+.modal-description {
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+/* Solution Cards - Green/Blue Theme */
+.solution-card-new {
+    border-color: rgba(34, 197, 94, 0.3) !important;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%) !important;
+}
+
+.solution-card-new:hover {
+    border-color: rgba(34, 197, 94, 0.6) !important;
+    box-shadow: 0 10px 40px rgba(34, 197, 94, 0.2) !important;
+    transform: translateY(-4px) !important;
+}
+
+.solution-card-new .problem-card-icon {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+}
+
+.solution-card-new .problem-card-hint {
+    color: #4ade80;
+}
+
+/* Solution Modal - Green/Blue Theme */
+.modal-solution .modal-icon {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+}
+
+.modal-solution .modal-title {
+    background: linear-gradient(90deg, #4ade80 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.modal-solution .modal-description {
+    color: var(--color-text-secondary);
+    line-height: 2;
 }
 
 /* Solutions Section */
@@ -169,11 +454,6 @@
     line-height: 1.6;
 }
 
-/* Presentation Section */
-.business-presentation {
-    background: var(--color-bg);
-}
-
 /* CTA Section */
 .business-cta {
     background: var(--gradient-hero);
@@ -204,6 +484,28 @@
     margin: 0;
 }
 
+/* Responsive */
+@media (max-width: 1024px) {
+    .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .hero-text-content {
+        text-align: center;
+    }
+
+    .hero-actions {
+        justify-content: center;
+    }
+
+    .notebook-hero-wrapper {
+        transform: none;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
+
 @media (max-width: 768px) {
     .business-title {
         font-size: var(--font-size-2xl);
@@ -211,6 +513,10 @@
 
     .business-icon-large {
         font-size: 3rem;
+    }
+
+    .problems-cards-grid {
+        grid-template-columns: 1fr;
     }
 
     .solutions-grid {
@@ -221,5 +527,17 @@
         grid-template-columns: 1fr;
         padding: var(--space-6);
         text-align: center;
+    }
+
+    .modal-content {
+        padding: var(--space-6);
+    }
+
+    .hero-actions {
+        flex-direction: column;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
     }
 }

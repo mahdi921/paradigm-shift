@@ -9,6 +9,8 @@ function BusinessPage() {
     const [business, setBusiness] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [selectedProblem, setSelectedProblem] = useState(null)
+    const [selectedSolution, setSelectedSolution] = useState(null)
 
     useEffect(() => {
         fetchBusiness()
@@ -29,6 +31,37 @@ function BusinessPage() {
             setLoading(false)
         }
     }
+
+    const openProblemModal = (index) => {
+        setSelectedProblem(index)
+        document.body.style.overflow = 'hidden'
+    }
+
+    const closeProblemModal = () => {
+        setSelectedProblem(null)
+        document.body.style.overflow = 'auto'
+    }
+
+    const openSolutionModal = (index) => {
+        setSelectedSolution(index)
+        document.body.style.overflow = 'hidden'
+    }
+
+    const closeSolutionModal = () => {
+        setSelectedSolution(null)
+        document.body.style.overflow = 'auto'
+    }
+
+    // Problem details with expanded info
+    const problemDetails = [
+        { icon: '⏰', impact: 'از دست دادن مشتری و درآمد', aiSolution: 'اتوماسیون و زمان‌بندی هوشمند' },
+        { icon: '💰', impact: 'هزینه‌های پنهان و اضافی', aiSolution: 'بهینه‌سازی منابع با AI' },
+        { icon: '📊', impact: 'تصمیم‌گیری نادرست', aiSolution: 'تحلیل داده و پیش‌بینی' },
+        { icon: '🎯', impact: 'از دست دادن فرصت‌ها', aiSolution: 'شناسایی الگوها با یادگیری ماشین' },
+    ]
+
+    // Solution icons
+    const solutionIcons = ['🤖', '⚡', '📱', '🎯']
 
     if (loading) {
         return (
@@ -62,79 +95,174 @@ function BusinessPage() {
 
     return (
         <div className="business-page">
-            {/* Hero */}
-            <section className="business-hero">
+            {/* Hero with NotebookLM */}
+            <section className="business-hero-extended">
+                <div className="hero-bg-overlay"></div>
                 <div className="container">
                     <Link to="/" className="back-link">
                         → بازگشت به صفحه اصلی
                     </Link>
 
-                    <div className="business-hero-content">
-                        <span className="business-badge">{business.category_name}</span>
-                        <div className="business-icon-large">{business.icon}</div>
-                        <h1 className="business-title">
-                            AI چطور به <span className="text-gradient">{business.name}</span> کمک می‌کنه؟
-                        </h1>
-                        <p className="business-subtitle">{business.name_en}</p>
+                    <div className="hero-grid">
+                        <div className="hero-text-content">
+                            <span className="business-badge">{business.category_name}</span>
+                            <div className="business-icon-large">{business.icon}</div>
+                            <h1 className="business-title">
+                                AI چطور به <span className="text-gradient">{business.name}</span> کمک می‌کنه؟
+                            </h1>
+                            <p className="business-subtitle">{business.name_en}</p>
+
+                            <div className="hero-actions">
+                                <a href="#problems" className="btn btn-primary btn-lg">
+                                    <span className="btn-icon">👀</span>
+                                    مشکلات رایج
+                                </a>
+                                <a href="#contact" className="btn btn-secondary btn-lg">
+                                    <span className="btn-icon">💬</span>
+                                    مشاوره رایگان
+                                </a>
+                            </div>
+                        </div>
+
+                        <div className="hero-notebook">
+                            <div className="notebook-hero-wrapper">
+                                <NotebookPlaceholder
+                                    title={`پرزنت ${business.name}`}
+                                    businessName={business.name}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Problems */}
-            <section className="business-problems section">
+            {/* Problems - Clickable Cards */}
+            <section id="problems" className="business-problems section">
                 <div className="container">
                     <div className="section-header">
                         <h2>😓 مشکلات رایج در این صنف</h2>
-                        <p>ما دردسرهاتون رو می‌فهمیم</p>
+                        <p>روی هر کارت کلیک کنید تا جزییات بیشتر ببینید</p>
                     </div>
 
-                    <div className="problems-list">
-                        {business.problems?.map((problem, index) => (
-                            <div key={index} className="problem-item">
-                                <span className="problem-number">{index + 1}</span>
-                                <span className="problem-text">{problem}</span>
-                            </div>
-                        ))}
+                    <div className="problems-cards-grid">
+                        {business.problems?.map((problem, index) => {
+                            // Handle both string and object format
+                            const problemTitle = typeof problem === 'string' ? problem : problem.title
+                            return (
+                                <div
+                                    key={index}
+                                    className="problem-card"
+                                    onClick={() => openProblemModal(index)}
+                                    style={{ animationDelay: `${index * 0.1}s` }}
+                                >
+                                    <div className="problem-card-icon">
+                                        {problemDetails[index % problemDetails.length]?.icon || '❓'}
+                                    </div>
+                                    <div className="problem-card-content">
+                                        <h3 className="problem-card-title">{problemTitle}</h3>
+                                    </div>
+                                    <div className="problem-card-arrow">
+                                        <span>←</span>
+                                    </div>
+                                    <div className="problem-card-hint">کلیک برای جزییات</div>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             </section>
+
+            {/* Problem Modal */}
+            {selectedProblem !== null && (() => {
+                const problem = business.problems[selectedProblem]
+                const problemTitle = typeof problem === 'string' ? problem : problem.title
+                const problemDesc = typeof problem === 'string'
+                    ? `این مشکل یکی از چالش‌های رایج در این صنفه که با راه‌حل‌های هوشمند قابل حله.`
+                    : problem.description
+
+                return (
+                    <div className="modal-overlay" onClick={closeProblemModal}>
+                        <div className="modal-content modal-simple" onClick={(e) => e.stopPropagation()}>
+                            <button className="modal-close" onClick={closeProblemModal}>✕</button>
+
+                            <div className="modal-header">
+                                <span className="modal-icon">
+                                    {problemDetails[selectedProblem % problemDetails.length]?.icon || '❓'}
+                                </span>
+                            </div>
+
+                            <h3 className="modal-title">{problemTitle}</h3>
+
+                            <p className="modal-description">{problemDesc}</p>
+                        </div>
+                    </div>
+                )
+            })()}
 
             {/* Solutions */}
             <section className="business-solutions section">
                 <div className="container">
                     <div className="section-header">
                         <h2>✨ راه‌حل‌های AI</h2>
-                        <p>چطور هوش مصنوعی این مشکلات رو حل می‌کنه</p>
+                        <p>روی هر کارت کلیک کنید تا جزییات بیشتر ببینید</p>
                     </div>
 
-                    <div className="solutions-grid">
-                        {business.solutions?.map((solution, index) => (
-                            <div key={index} className="solution-card">
-                                <span className="solution-icon">🎯</span>
-                                <span className="solution-text">{solution}</span>
+                    <div className="problems-cards-grid">
+                        {business.solutions?.map((solution, index) => {
+                            const solutionTitle = typeof solution === 'string' ? solution : solution.title
+                            return (
+                                <div
+                                    key={index}
+                                    className="problem-card solution-card-new"
+                                    onClick={() => openSolutionModal(index)}
+                                    style={{ animationDelay: `${index * 0.1}s` }}
+                                >
+                                    <div className="problem-card-icon">
+                                        {solutionIcons[index % solutionIcons.length]}
+                                    </div>
+                                    <div className="problem-card-content">
+                                        <h3 className="problem-card-title">{solutionTitle}</h3>
+                                    </div>
+                                    <div className="problem-card-arrow">
+                                        <span>←</span>
+                                    </div>
+                                    <div className="problem-card-hint">کلیک برای جزییات</div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+            </section>
+
+            {/* Solution Modal */}
+            {selectedSolution !== null && (() => {
+                const solution = business.solutions[selectedSolution]
+                const solutionTitle = typeof solution === 'string' ? solution : solution.title
+                const solutionDesc = typeof solution === 'string'
+                    ? `این راه‌حل با استفاده از هوش مصنوعی به بهبود کسب‌وکار شما کمک می‌کنه.`
+                    : solution.description
+
+                return (
+                    <div className="modal-overlay" onClick={closeSolutionModal}>
+                        <div className="modal-content modal-simple modal-solution" onClick={(e) => e.stopPropagation()}>
+                            <button className="modal-close" onClick={closeSolutionModal}>✕</button>
+
+                            <div className="modal-header">
+                                <span className="modal-icon">
+                                    {solutionIcons[selectedSolution % solutionIcons.length]}
+                                </span>
                             </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
 
-            {/* NotebookLM Placeholder */}
-            <section className="business-presentation section">
-                <div className="container">
-                    <div className="section-header">
-                        <h2>📊 پرزنت اختصاصی</h2>
-                        <p>ببینید دقیقاً چه کارهایی می‌تونیم براتون انجام بدیم</p>
-                    </div>
+                            <h3 className="modal-title">{solutionTitle}</h3>
 
-                    <NotebookPlaceholder
-                        title={`پرزنت برای ${business.name}`}
-                        businessName={business.name}
-                    />
-                </div>
-            </section>
+                            <p className="modal-description">{solutionDesc}</p>
+                        </div>
+                    </div>
+                )
+            })()}
 
             {/* CTA */}
-            <section className="business-cta section">
+            <section id="contact" className="business-cta section">
                 <div className="container">
                     <div className="cta-wrapper">
                         <div className="cta-text">
