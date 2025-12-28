@@ -1,0 +1,242 @@
+.business-section {
+    background: var(--color-bg);
+}
+
+.section-badge-blue {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    color: var(--color-primary-light);
+    margin-bottom: var(--space-4);
+}
+
+/* Category Pills */
+.category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-10);
+}
+
+.category-pill {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.category-pill:hover {
+    border-color: var(--pill-color, var(--color-primary));
+    color: var(--color-text);
+}
+
+.category-pill.active {
+    background: var(--pill-color, var(--color-primary));
+    border-color: var(--pill-color, var(--color-primary));
+    color: white;
+}
+
+.pill-icon {
+    font-size: 1rem;
+}
+
+/* Category Cards Grid */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+}
+
+.category-card {
+    position: relative;
+    background: var(--gradient-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    animation: fade-in 0.6s ease-out forwards;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--card-color, var(--gradient-primary));
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-color, var(--color-primary));
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+}
+
+.category-card:hover::before {
+    opacity: 1;
+}
+
+.category-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-3);
+}
+
+.category-name {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+    color: var(--color-text);
+}
+
+.category-count {
+    display: inline-block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    background: rgba(99, 102, 241, 0.1);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-3);
+}
+
+.category-arrow {
+    display: block;
+    color: var(--color-primary-light);
+    font-size: var(--font-size-xl);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all var(--transition-fast);
+}
+
+.category-card:hover .category-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Businesses Grid */
+.businesses-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+}
+
+.business-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: all var(--transition-base);
+    animation: fade-in 0.4s ease-out forwards;
+    opacity: 0;
+}
+
+.business-card:hover {
+    transform: translateX(-4px);
+    border-color: var(--color-primary);
+    background: var(--gradient-card);
+}
+
+.business-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-lg);
+    flex-shrink: 0;
+}
+
+.business-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.business-name {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 var(--space-1) 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.business-name-en {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.business-arrow {
+    color: var(--color-primary-light);
+    font-size: var(--font-size-lg);
+    opacity: 0;
+    transition: all var(--transition-fast);
+}
+
+.business-card:hover .business-arrow {
+    opacity: 1;
+}
+
+.loading-state {
+    text-align: center;
+    padding: var(--space-12);
+    color: var(--color-text-secondary);
+}
+
+@media (max-width: 1024px) {
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .businesses-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .category-pills {
+        gap: var(--space-2);
+    }
+
+    .category-pill {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--font-size-xs);
+    }
+
+    .categories-grid,
+    .businesses-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .category-card {
+        padding: var(--space-5);
+    }
+
+    .business-card {
+        padding: var(--space-3);
+    }
+}
